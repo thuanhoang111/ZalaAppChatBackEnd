@@ -1,10 +1,10 @@
 package com.javamaster.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,28 +14,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javamaster.entity.Contact;
+import com.javamaster.dto.AddMemberInGroup;
+import com.javamaster.dto.DeleteMemberInGroup;
 import com.javamaster.entity.Conversation;
 import com.javamaster.entity.Member;
 import com.javamaster.entity.Message;
 import com.javamaster.service.IConversationService;
+import com.javamaster.service.IMemberService;
+import com.javamaster.service.IUserService;
 import com.javamaster.storage.ConversationStorage;
-import com.javamaster.storage.UserStorage;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/conversations")
 public class ConversationController {
-	
+
 	@Autowired
 	private IConversationService conversationService;
+
+	@Autowired
+	private IUserService userService;
+
+	@Autowired
+	private IMemberService memberService;
 
 	@PostMapping(value = { "", "/" }, consumes = { "application/json", "application/x-www-form-urlencoded" })
 	public Conversation registeConversation(@RequestBody Conversation model) {
 		Conversation conversation;
 		try {
 			conversation = conversationService.createConversation(model);
-			
+
 		} catch (Exception e) {
 			return null;
 		}
@@ -46,7 +54,7 @@ public class ConversationController {
 	public Set<Conversation> fetchAllConversations() {
 		return ConversationStorage.getInstance().getConversations();
 	}
-	
+
 	@GetMapping("/user/{userId}")
 	public List<Conversation> getConversationsByUserId(@PathVariable String userId) {
 		try {
@@ -56,7 +64,7 @@ public class ConversationController {
 			return Arrays.asList();
 		}
 	}
-	
+
 	@GetMapping("/{conversationId}")
 	public Conversation getConversationsById(@PathVariable String conversationId) {
 		try {
@@ -66,7 +74,7 @@ public class ConversationController {
 			return null;
 		}
 	}
-	
+
 	@GetMapping("/chat/{conversationId}")
 	public List<Message> getAllMessagesInConversation(@PathVariable String conversationId) {
 		try {
@@ -76,7 +84,7 @@ public class ConversationController {
 			return Arrays.asList();
 		}
 	}
-	
+
 	@GetMapping("/members/{conversationId}")
 	public List<Member> getAllMembersInConversation(@PathVariable String conversationId) {
 		try {
@@ -85,5 +93,28 @@ public class ConversationController {
 		} catch (Exception e) {
 			return Arrays.asList();
 		}
+	}
+
+	@PostMapping("/addMemberInGroup")
+	public Conversation addMemberInGroup(@RequestBody AddMemberInGroup addMemberInGroup)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		Conversation conversation = conversationService.addFriendInConversation(
+				addMemberInGroup.getConversationId().trim(), addMemberInGroup.getUserId().trim());
+
+		return conversation;
+	}
+
+	@PostMapping("/deleteMemberInGroup")
+	public Conversation deleteMemberInGroup(@RequestBody DeleteMemberInGroup deleteMemberInGroup)
+			throws InterruptedException, ExecutionException, TimeoutException {
+
+		Conversation conversation = conversationService.deleteFriendInConversation(
+				deleteMemberInGroup.getConversationId().trim(), deleteMemberInGroup.getMemberId().trim());
+
+		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
+				deleteMemberInGroup.getMemberId().trim());
+		memberService.deleteMemberById(deleteMemberInGroup.getMemberId().trim());
+
+		return conversation;
 	}
 }

@@ -20,6 +20,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.javamaster.entity.Message;
 import com.javamaster.entity.User;
 import com.javamaster.firebase.FirebaseConfig;
+import com.javamaster.repository.UserRepository;
 import com.javamaster.service.IUserService;
 import com.javamaster.storage.UserStorage;
 
@@ -30,35 +31,36 @@ public class UserServiceImpl implements IUserService {
 	private FirebaseConfig firebase;
 	private static final String COLLECTION_NAME = "users";
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Override
 	public User addUser(User user) throws InterruptedException, ExecutionException {
-			Firestore dbFireStore = FirestoreClient.getFirestore();
-				
-			String autoId = dbFireStore.collection(COLLECTION_NAME).document(Internal.autoId()).getId();
-			
-			user.setId(autoId);
-			user.setMembers(Arrays.asList());
-			user.setConversations(Arrays.asList());
-			
-			ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(autoId)
-					.set(user);
-			collectionAPIFuture.get().getUpdateTime().toString();
+		Firestore dbFireStore = FirestoreClient.getFirestore();
+
+		String autoId = dbFireStore.collection(COLLECTION_NAME).document(Internal.autoId()).getId();
+
+		user.setId(autoId);
+		user.setMembers(Arrays.asList());
+		user.setConversations(Arrays.asList());
+
+		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(autoId).set(user);
+		collectionAPIFuture.get().getUpdateTime().toString();
 
 //			UserStorage.getInstance().setUser(user);
-			
-		
+
 		return user;
 	}
-	
+
 	@Override
-    public User getUser(String id) throws InterruptedException, ExecutionException{
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(id);
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
-        DocumentSnapshot document = future.get();
-        User users = null;
-        return users = document.toObject(User.class);
-    }
+	public User getUser(String id) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(id);
+		ApiFuture<DocumentSnapshot> future = documentReference.get();
+		DocumentSnapshot document = future.get();
+		User users = null;
+		return users = document.toObject(User.class);
+	}
 
 	@Override
 	public User findUserByPhoneNumber(String phoneNumber) throws InterruptedException, ExecutionException {
@@ -67,18 +69,31 @@ public class UserServiceImpl implements IUserService {
 		ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
 		User user = null;
-        for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-        	user = document.toObject(User.class);
-        }
-        return user;
+		for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+			user = document.toObject(User.class);
+		}
+		return user;
 	}
+
 	@Override
 	public User updateUser(User user) throws InterruptedException, ExecutionException {
 		Firestore dbFireStore = FirestoreClient.getFirestore();
-		
+
 		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(user.getId())
 				.set(user);
 		collectionAPIFuture.get().getUpdateTime().toString();
+		return user;
+	}
+
+	// Author:NHH
+	@Override
+	public User deleteMemberInUser(String userId, String memberId) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		User user = userRepository.findById(userId).block();
+		List<String> listMemberInUser = user.getMembers();
+		listMemberInUser.remove(memberId);
+		user.setMembers(listMemberInUser);
+		ApiFuture<WriteResult> collectionAPIFuture = dbFirestore.collection(COLLECTION_NAME).document(userId).set(user);
 		return user;
 	}
 

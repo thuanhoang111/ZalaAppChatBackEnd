@@ -1,5 +1,6 @@
 package com.javamaster.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -22,39 +23,37 @@ import com.javamaster.service.IUserService;
 import com.javamaster.storage.MemberStorage;
 
 @Service
-public class MemberServiceImpl implements IMemberService{
-	
+public class MemberServiceImpl implements IMemberService {
+
 	@Autowired
 	private FirebaseConfig firebase;
 	private static final String COLLECTION_NAME = "members";
 	private static final String COLLECTION_NAME_USER = "users";
-	
+
 	@Autowired
 	private IUserService userService;
 
 	@Override
 	public Member createMember(Member member) throws InterruptedException, ExecutionException {
 		Firestore dbFireStore = FirestoreClient.getFirestore();
-		
+
 		String autoId = dbFireStore.collection(COLLECTION_NAME).document(Internal.autoId()).getId();
-		
+
 		member.setId(autoId);
-		
+
 		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(autoId)
 				.set(member);
 		collectionAPIFuture.get().getUpdateTime().toString();
-		
-		
+
 		User user = userService.getUser(member.getUserId());
-		
+
 		List<String> membersOfUser = user.getMembers();
 		membersOfUser.add(member.getId());
 		user.setMembers(membersOfUser);
-		
-		
-		ApiFuture<WriteResult> collectionAPIFuture2 = dbFireStore.collection(COLLECTION_NAME_USER).document(member.getUserId())
-				.set(user);
-		
+
+		ApiFuture<WriteResult> collectionAPIFuture2 = dbFireStore.collection(COLLECTION_NAME_USER)
+				.document(member.getUserId()).set(user);
+
 		return member;
 	}
 
@@ -67,14 +66,24 @@ public class MemberServiceImpl implements IMemberService{
 		Member member = null;
 		return member = document.toObject(Member.class);
 	}
+
 	@Override
 	public Member updateMember(Member member) throws InterruptedException, ExecutionException {
 		Firestore dbFireStore = FirestoreClient.getFirestore();
-		
+
 		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(member.getId())
 				.set(member);
 		collectionAPIFuture.get().getUpdateTime().toString();
 		return member;
 	}
 	
+	//Author:NHH
+	@Override
+	public String deleteMemberById(String memberId) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		ApiFuture<WriteResult> collectionAPIFuture = dbFirestore.collection(COLLECTION_NAME).document(memberId)
+				.delete();
+		return "Delete Member id: " + memberId + "-at: " + LocalDateTime.now();
+	}
+
 }

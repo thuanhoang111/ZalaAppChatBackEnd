@@ -2,6 +2,8 @@ package com.javamaster.entity;
 
 import java.util.List;
 
+import org.springframework.cloud.gcp.data.firestore.Document;
+@Document(collectionName = "users")
 public class User {
 	private String id;
 	private String fullName;
