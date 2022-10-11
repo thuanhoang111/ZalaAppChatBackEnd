@@ -9,6 +9,11 @@ import com.javamaster.entity.Member;
 @Service
 public interface IMemberService {
 	Member createMember(Member member) throws InterruptedException, ExecutionException;
+
 	Member getMemberById(String memberId) throws InterruptedException, ExecutionException;
+
 	Member updateMember(Member member) throws InterruptedException, ExecutionException;
+
+//Author:NHH
+	String deleteMemberById(String memberId) throws InterruptedException, ExecutionException;
 }

@@ -12,6 +12,16 @@ import com.javamaster.entity.Message;
 @Service
 public interface IConversationService {
 	Conversation createConversation(Conversation conversation) throws InterruptedException, ExecutionException;
+/**
+ * 
+ * @param conversationId
+ * @param userId
+ * @return 
+ * @throws InterruptedException
+ * @throws ExecutionException
+ */
+	Conversation addFriendInConversation(String conversationId,String userId) throws InterruptedException, ExecutionException;
+	Conversation deleteFriendInConversation(String conversationId, String memberId) throws InterruptedException, ExecutionException;
 	List<Conversation> getConversationsByUserId(String userId) throws InterruptedException, ExecutionException;
 	Conversation getConversationById(String conversationId) throws InterruptedException, ExecutionException;
 	List<Message> getAllMessageInConversation(String conversationId) throws InterruptedException, ExecutionException;
