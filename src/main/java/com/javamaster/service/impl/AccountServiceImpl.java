@@ -31,7 +31,7 @@ public class AccountServiceImpl implements IAccountService{
 	private IUserService userService;
 
 	@Override
-	public int createAccount(Account account) throws InterruptedException, ExecutionException {
+	public Account createAccount(Account account) throws InterruptedException, ExecutionException {
 		try {
 			
 			Firestore dbFireStore = FirestoreClient.getFirestore();
@@ -44,9 +44,9 @@ public class AccountServiceImpl implements IAccountService{
 					.set(account);
 			collectionAPIFuture.get().getUpdateTime().toString();
 			
-			return 0;
+			return account;
 		} catch (Exception e) {
-			return 1;
+			return null;
 		}
 	}
 

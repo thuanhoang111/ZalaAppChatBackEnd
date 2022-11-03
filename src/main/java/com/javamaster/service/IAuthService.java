@@ -11,7 +11,7 @@ import com.javamaster.model.UpdateAccount;
 
 @Service
 public interface IAuthService {
-	int registerAccount(ModelRegisterAccount modelRegisterAccount) throws InterruptedException, ExecutionException;
+	Account registerAccount(ModelRegisterAccount modelRegisterAccount) throws InterruptedException, ExecutionException;
 	Account login(ModelLogin modelLogin) throws InterruptedException, ExecutionException;
 	int updateAccount(UpdateAccount updateAccount, String phoneNumber) throws InterruptedException, ExecutionException;
 }

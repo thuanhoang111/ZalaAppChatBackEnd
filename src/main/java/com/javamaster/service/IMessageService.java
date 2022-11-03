@@ -14,4 +14,5 @@ public interface IMessageService {
 	Message getMessageById(String MessageId) throws InterruptedException, ExecutionException;
 	Message sendMessage(Message message) throws InterruptedException, ExecutionException;
 	Message updateMessage(Message message) throws InterruptedException, ExecutionException;
+	String DeleteMessage(String id) throws InterruptedException, ExecutionException;
 }

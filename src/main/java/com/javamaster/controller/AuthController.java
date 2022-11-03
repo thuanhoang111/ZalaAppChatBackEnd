@@ -24,13 +24,13 @@ public class AuthController {
 	private IAuthService authService;
 	
 	@PostMapping("/register")
-	private int register(@RequestBody ModelRegisterAccount model) {
+	private Account register(@RequestBody ModelRegisterAccount model) {
 		try {
-			int result = authService.registerAccount(model);
+			Account result = authService.registerAccount(model);
 			return result;			
 		} catch (Exception e) {
 			// TODO: handle exception
-			return 1;
+			return null;
 		}
 	}
 	

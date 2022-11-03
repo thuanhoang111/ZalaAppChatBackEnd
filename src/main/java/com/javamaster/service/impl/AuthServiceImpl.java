@@ -39,7 +39,7 @@ public class AuthServiceImpl implements IAuthService {
 	private IMessageService messageService;
 
 	@Override
-	public int registerAccount(ModelRegisterAccount modelRegisterAccount)
+	public Account registerAccount(ModelRegisterAccount modelRegisterAccount)
 			throws InterruptedException, ExecutionException {
 
 		System.out.println(modelRegisterAccount.toString());
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements IAuthService {
 		account.setPhoneNumber(modelRegisterAccount.getPhoneNumber());
 		account.setUserId(user.getId());
 
-		int result = accountService.createAccount(account);
+		Account result = accountService.createAccount(account);
 
 		return result;
 	}

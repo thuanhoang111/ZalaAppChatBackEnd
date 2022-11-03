@@ -1,27 +1,24 @@
 package com.javamaster.controller;
 
-import com.javamaster.entity.Contact;
-import com.javamaster.entity.Message;
-import com.javamaster.entity.User;
-import com.javamaster.model.MessageGroup;
-import com.javamaster.model.MessageModel;
-import com.javamaster.service.IMessageService;
-import com.javamaster.storage.ConversationStorage;
-import com.javamaster.storage.UserStorage;
-
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.javamaster.entity.Message;
+import com.javamaster.service.IMessageService;
+import com.javamaster.storage.ConversationStorage;
+
+import io.grpc.netty.shaded.io.netty.handler.timeout.TimeoutException;
 
 @RestController
 public class MessageController {
@@ -71,7 +68,10 @@ public class MessageController {
 			return null;
 		}
 	}
-    
+	@DeleteMapping("/chatMessages/{id}")
+    public String DeleteChatMessage(@PathVariable String id) throws InterruptedException, ExecutionException, TimeoutException {
+        return messageService.DeleteMessage(id);
+    }
     
     
     

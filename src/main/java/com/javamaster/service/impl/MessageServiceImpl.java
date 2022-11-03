@@ -123,5 +123,12 @@ public class MessageServiceImpl implements IMessageService {
 		collectionAPIFuture.get().getUpdateTime().toString();
 		return message;
 	}
+	
+	@Override
+	public String DeleteMessage(String id) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		ApiFuture<WriteResult> collectionApiFuture = dbFirestore.collection(COLLECTION_NAME).document(id).delete();
+		return "Delete Message Id:" + id;
+	}
 
 }

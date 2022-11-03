@@ -67,7 +67,7 @@ public class UsersController {
 		User user;
 		
 		try {
-			user = userService.findUserByPhoneNumber(phoneNumber);
+			user = userService.findUserByPhoneNumber("+"+phoneNumber);
 		} catch (Exception e) {
 			// TODO: handle exception
 			return null;
