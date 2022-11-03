@@ -19,7 +19,7 @@ public class FirebaseConfig {
 	public void initFirebase() {
 		FileInputStream serviceAccount = null;
 		try {
-			serviceAccount = new FileInputStream("./zala-d8638-firebase-adminsdk-47cca-8466dbda87.json");
+			serviceAccount = new FileInputStream("./appchatzala-firebase-adminsdk-97epp-b5a108ed70.json");
 
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
