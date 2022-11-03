@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,5 +80,14 @@ public class NotifycationController {
 		simpMessagingTemplate.convertAndSend("/topic/notifycation/" + userId, result);
         
     }
+	@DeleteMapping("/deleteFriendRequest/{id}")
+	int deleteFriendRequest(@PathVariable String id) {
+		try {
+			notifycationService.deleteAddFriendRequest(id);
+			return 0;
+		} catch (Exception e) {
+			return 1;
+		}
+	}
 
 }

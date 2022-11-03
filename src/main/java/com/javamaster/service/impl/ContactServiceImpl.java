@@ -46,6 +46,7 @@ public class ContactServiceImpl implements IContactService {
 		bodyNewConversation.setMemberInGroup(Arrays.asList(modelAddFriend.getUserId(), modelAddFriend.getFriendId()));
 		bodyNewConversation.setGroupName(modelAddFriend.getNameUser() + "-" + modelAddFriend.getNameFriend());
 		
+		
 		Conversation conversation = conversationService.createConversation(bodyNewConversation);
 		
 		String autoId = dbFireStore.collection(COLLECTION_NAME).document(Internal.autoId()).getId();

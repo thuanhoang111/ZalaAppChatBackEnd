@@ -11,4 +11,5 @@ import com.javamaster.entity.AddFriendRequest;
 public interface INotifycationService {
 	AddFriendRequest createAddFriendRequest(AddFriendRequest addFriendRequest) throws InterruptedException, ExecutionException;
 	List<AddFriendRequest> getAllAddFriendRequestByUserId(String userId) throws InterruptedException, ExecutionException;
+	int deleteAddFriendRequest(String id) throws InterruptedException, ExecutionException;
 }

@@ -94,6 +94,11 @@ public class ConversationServiceImpl implements IConversationService {
 
 		conversation.setMemberInGroup(memberInGroup);
 		conversation.setMessages(Arrays.asList());
+		if(conversation.getMemberInGroup().size()<=2) {
+			conversation.setTypeChat(false);
+		}else {
+			conversation.setTypeChat(true);
+		}
 		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(autoId)
 				.set(conversation);
 
@@ -240,14 +245,31 @@ public class ConversationServiceImpl implements IConversationService {
 	}
 
 	@Override
-	public Conversation deleteFriendInConversation(String conversationId, String memberId) {
+	public Conversation leaveConversation(String conversationId, String memberId, String userId) {
 		Firestore dbFirestore = FirestoreClient.getFirestore();
+		//handle remove member in conversation
 		Conversation conversation = conversationRepository.findById(conversationId).block();
 		List<String> memberInConversation = conversation.getMemberInGroup();
 		memberInConversation.remove(memberId);
 		conversation.setMemberInGroup(memberInConversation);
 		ApiFuture<WriteResult> collectionAPIFuture = dbFirestore.collection(COLLECTION_NAME).document(conversationId)
 				.set(conversation);
+		//handle remove conversation in user
+		User user = userRepository.findById(userId).block();
+		List<String> getListConversationInUser = user.getConversations();
+		getListConversationInUser.remove(conversationId);
+		user.setConversations(getListConversationInUser);
+		System.out.println(user.getConversations());
+		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
+				.set(user);	
+		//handle remove member in user
+		User user2 = userRepository.findById(userId).block();
+		List<String> getListMemberInUser = user2.getMembers();
+		getListMemberInUser.remove(memberId);
+		user2.setMembers(getListMemberInUser);
+		System.out.println( user2.getMembers());
+		ApiFuture<WriteResult> collectionAPIFuture3 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
+				.set(user2);
 //		collectionAPIFuture.get().getUpdateTime().toString();
 		return conversation;
 	}
