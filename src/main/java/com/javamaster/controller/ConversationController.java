@@ -104,15 +104,15 @@ public class ConversationController {
 		return conversation;
 	}
 
-	@PostMapping("/deleteMemberInGroup")
-	public Conversation deleteMemberInGroup(@RequestBody DeleteMemberInGroup deleteMemberInGroup)
+	@PostMapping("/leaveConversation")
+	public Conversation leaveConversation(@RequestBody DeleteMemberInGroup deleteMemberInGroup)
 			throws InterruptedException, ExecutionException, TimeoutException {
+		Conversation conversation = conversationService.leaveConversation(
+				deleteMemberInGroup.getConversationId().trim(), deleteMemberInGroup.getMemberId().trim(),
+				deleteMemberInGroup.getUserId().trim());
 
-		Conversation conversation = conversationService.deleteFriendInConversation(
-				deleteMemberInGroup.getConversationId().trim(), deleteMemberInGroup.getMemberId().trim());
-
-		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
-				deleteMemberInGroup.getMemberId().trim());
+//		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
+//				deleteMemberInGroup.getMemberId().trim());
 		memberService.deleteMemberById(deleteMemberInGroup.getMemberId().trim());
 
 		return conversation;

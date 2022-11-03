@@ -18,9 +18,12 @@ import com.javamaster.entity.Conversation;
 import com.javamaster.entity.Member;
 import com.javamaster.entity.User;
 import com.javamaster.firebase.FirebaseConfig;
+import com.javamaster.repository.MemberRepository;
 import com.javamaster.service.IMemberService;
 import com.javamaster.service.IUserService;
 import com.javamaster.storage.MemberStorage;
+
+import reactor.core.publisher.Flux;
 
 @Service
 public class MemberServiceImpl implements IMemberService {
@@ -32,6 +35,8 @@ public class MemberServiceImpl implements IMemberService {
 
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private MemberRepository memberRepository;
 
 	@Override
 	public Member createMember(Member member) throws InterruptedException, ExecutionException {
@@ -85,5 +90,15 @@ public class MemberServiceImpl implements IMemberService {
 				.delete();
 		return "Delete Member id: " + memberId + "-at: " + LocalDateTime.now();
 	}
+
+	@Override
+	public Flux<Member> getMemberByConversationId(String conversationId) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		Flux<Member> member = memberRepository.findAllByConversationId(conversationId);
+		
+		return member;
+	}
+
+	
 
 }

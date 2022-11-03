@@ -9,6 +9,7 @@ public class Conversation {
 	private String groupName;
 	private List<String> memberInGroup;
 	private List<String> messages;
+	private boolean typeChat;
 	public Conversation(String id, String groupName, List<String> memberInGroup, List<String> messages) {
 		super();
 		this.id = id;
@@ -16,6 +17,17 @@ public class Conversation {
 		this.memberInGroup = memberInGroup;
 		this.messages = messages;
 	}
+	
+	public Conversation(String id, String groupName, List<String> memberInGroup, List<String> messages,
+			boolean typeChat) {
+		super();
+		this.id = id;
+		this.groupName = groupName;
+		this.memberInGroup = memberInGroup;
+		this.messages = messages;
+		this.typeChat = typeChat;
+	}
+
 	public Conversation() {
 		super();
 	}
@@ -47,11 +59,23 @@ public class Conversation {
 	public void setMessages(List<String> messages) {
 		this.messages = messages;
 	}
+	
+
+	public boolean isTypeChat() {
+		return typeChat;
+	}
+
+	public void setTypeChat(boolean typeChat) {
+		this.typeChat = typeChat;
+	}
+	
+
 	@Override
 	public String toString() {
 		return "Conversation [id=" + id + ", groupName=" + groupName + ", memberInGroup=" + memberInGroup
-				+ ", messages=" + messages + "]";
+				+ ", messages=" + messages + ", typeChat=" + typeChat + "]";
 	}
+	
 	
 	
 	
