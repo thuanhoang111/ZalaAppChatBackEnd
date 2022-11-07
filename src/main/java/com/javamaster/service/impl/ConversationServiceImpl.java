@@ -1,5 +1,6 @@
 package com.javamaster.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,13 +92,14 @@ public class ConversationServiceImpl implements IConversationService {
 			collectionAPIFuture3.get().getUpdateTime().toString();
 
 		}
-
+		
 		conversation.setMemberInGroup(memberInGroup);
 		conversation.setMessages(Arrays.asList());
 		if(conversation.getMemberInGroup().size()<=2) {
 			conversation.setTypeChat(false);
 		}else {
 			conversation.setTypeChat(true);
+			
 		}
 		ApiFuture<WriteResult> collectionAPIFuture = dbFireStore.collection(COLLECTION_NAME).document(autoId)
 				.set(conversation);
@@ -219,19 +221,19 @@ public class ConversationServiceImpl implements IConversationService {
 				.set(conversation);
 		System.out.println(conversation);
 		/////////////// update conversation in user
-		User user = userRepository.findById(userId).block();
-		List<String> list1 = user.getConversations();
-		list1.add(conversationId);
-		user.setConversations(list1);
-		System.out.println(user.getFullName() + "   " + user.getConversations());
-		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
-				.set(user);
+//		User user = userRepository.findById(userId).block();
+//		List<String> list1 = user.getConversations();
+//		list1.add(conversationId);
+//		user.setConversations(list1);
+//		System.out.println(user.getFullName() + "   " + user.getConversations());
+//		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
+//				.set(user);
 //		collectionAPIFuture2.get().getUpdateTime().toString();
 //		// update memberId in user
 //
 //		/////////////// update member in user
 		User user2 = userRepository.findById(userId).block();
-		List<String> list2 = user.getMembers();
+		List<String> list2 = user2.getMembers();
 		list2.add(memberTemp.getId());
 		user2.setMembers(list2);
 		System.out.println(user2.getMembers() + "   " + user2.getConversations());
@@ -254,24 +256,38 @@ public class ConversationServiceImpl implements IConversationService {
 		conversation.setMemberInGroup(memberInConversation);
 		ApiFuture<WriteResult> collectionAPIFuture = dbFirestore.collection(COLLECTION_NAME).document(conversationId)
 				.set(conversation);
+//		//handle remove member in user
+//		User user2 = userRepository.findById(userId).block();
+//		List<String> getListMemberInUser = user2.getMembers();
+//		getListMemberInUser.remove(memberId);
+//		user2.setMembers(getListMemberInUser);
+//		System.out.println( user2.getMembers());
+//		ApiFuture<WriteResult> collectionAPIFuture3 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
+//				.set(user2);
 		//handle remove conversation in user
-		User user = userRepository.findById(userId).block();
-		List<String> getListConversationInUser = user.getConversations();
-		getListConversationInUser.remove(conversationId);
-		user.setConversations(getListConversationInUser);
-		System.out.println(user.getConversations());
-		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
-				.set(user);	
-		//handle remove member in user
-		User user2 = userRepository.findById(userId).block();
-		List<String> getListMemberInUser = user2.getMembers();
-		getListMemberInUser.remove(memberId);
-		user2.setMembers(getListMemberInUser);
-		System.out.println( user2.getMembers());
-		ApiFuture<WriteResult> collectionAPIFuture3 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
-				.set(user2);
+//				User user4 = userRepository.findById(userId).block();
+//				List<String> getListConversationInUser = user4.getConversations();
+//				getListConversationInUser.remove(conversationId);
+//				user4.setConversations(getListConversationInUser);
+//				System.out.println(user4.getConversations());
+//				ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME_USERS).document(userId)
+//						.set(user4);	
 //		collectionAPIFuture.get().getUpdateTime().toString();
 		return conversation;
+	}
+
+	@Override
+	public String deleteConversation(String conversationId) throws InterruptedException, ExecutionException {
+	
+//			Firestore dbFirestore = FirestoreClient.getFirestore();
+//			conversationRepository.deleteById(conversationId).block();
+			
+			Firestore dbFirestore = FirestoreClient.getFirestore();
+			ApiFuture<WriteResult> collectionAPIFuture = dbFirestore.collection(COLLECTION_NAME).document(conversationId)
+					.delete();
+			return "Delete Conversation id: " + conversationId + "-at: " + LocalDateTime.now();
+			
+		
 	}
 
 }

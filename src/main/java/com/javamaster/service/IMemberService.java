@@ -20,4 +20,6 @@ public interface IMemberService {
 
 //Author:NHH
 	String deleteMemberById(String memberId) throws InterruptedException, ExecutionException;
-}
+//Author:NHH
+	int deleteMemberInUser(String memberId, String userId) throws InterruptedException, ExecutionException;
+} 

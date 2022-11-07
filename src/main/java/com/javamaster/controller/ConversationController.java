@@ -19,6 +19,7 @@ import com.javamaster.dto.DeleteMemberInGroup;
 import com.javamaster.entity.Conversation;
 import com.javamaster.entity.Member;
 import com.javamaster.entity.Message;
+import com.javamaster.entity.User;
 import com.javamaster.service.IConversationService;
 import com.javamaster.service.IMemberService;
 import com.javamaster.service.IUserService;
@@ -100,9 +101,21 @@ public class ConversationController {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		Conversation conversation = conversationService.addFriendInConversation(
 				addMemberInGroup.getConversationId().trim(), addMemberInGroup.getUserId().trim());
+//		if(conversation!=null) {
+//			userService.addConversationInUser(addMemberInGroup.getUserId().trim(), addMemberInGroup.getConversationId().trim());
+//		}
 
 		return conversation;
 	}
+	
+	@PostMapping("/addConversationInUser")
+	public User addConversationInUser(@RequestBody AddMemberInGroup addMemberInGroup)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		
+		return userService.addConversationInUser(addMemberInGroup.getUserId().trim(), addMemberInGroup.getConversationId().trim());
+		
+	}
+	
 
 	@PostMapping("/leaveConversation")
 	public Conversation leaveConversation(@RequestBody DeleteMemberInGroup deleteMemberInGroup)
@@ -110,11 +123,37 @@ public class ConversationController {
 		Conversation conversation = conversationService.leaveConversation(
 				deleteMemberInGroup.getConversationId().trim(), deleteMemberInGroup.getMemberId().trim(),
 				deleteMemberInGroup.getUserId().trim());
-
-//		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
+		if(conversation!=null) {
+//			userService.deleteConversationInUser(deleteMemberInGroup.getUserId().trim(), deleteMemberInGroup.getConversationId().trim());
+			userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(), deleteMemberInGroup.getMemberId().trim());
+			memberService.deleteMemberById(deleteMemberInGroup.getMemberId().trim());			
+		}
+		//		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
 //				deleteMemberInGroup.getMemberId().trim());
-		memberService.deleteMemberById(deleteMemberInGroup.getMemberId().trim());
 
 		return conversation;
+	}
+	
+	
+	@PostMapping("/leaveConversationInUser")
+	public User leaveConversationInUser(@RequestBody DeleteMemberInGroup deleteMemberInGroup)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		
+		return	userService.deleteConversationInUser(deleteMemberInGroup.getUserId().trim(), deleteMemberInGroup.getConversationId().trim());
+			
+		//		userService.deleteMemberInUser(deleteMemberInGroup.getUserId().trim(),
+//				deleteMemberInGroup.getMemberId().trim());
+
+		
+	}
+	
+	@PostMapping("/delete/{conversationId}")
+	public int deleteConversation(@PathVariable String conversationId) {
+		try {
+			conversationService.deleteConversation(conversationId);
+			return 1;
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }
