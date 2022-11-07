@@ -18,4 +18,6 @@ public interface IUserService {
 
 	//Author: NHH
 	User deleteMemberInUser(String userId, String memberId) throws InterruptedException, ExecutionException;
+	User deleteConversationInUser(String userId,String conversationId) throws InterruptedException, ExecutionException;
+	User addConversationInUser(String userId,String conversationId) throws InterruptedException, ExecutionException;
 }

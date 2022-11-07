@@ -21,6 +21,7 @@ public interface IConversationService {
  * @throws ExecutionException
  */
 	Conversation addFriendInConversation(String conversationId,String userId) throws InterruptedException, ExecutionException;
+	String deleteConversation (String conversationId) throws InterruptedException, ExecutionException;	
 	
 	Conversation leaveConversation(String conversationId, String memberId, String userId) throws InterruptedException, ExecutionException;
 	List<Conversation> getConversationsByUserId(String userId) throws InterruptedException, ExecutionException;

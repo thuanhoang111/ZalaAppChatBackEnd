@@ -1,6 +1,7 @@
 package com.javamaster.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,6 +20,7 @@ import com.javamaster.entity.Member;
 import com.javamaster.entity.User;
 import com.javamaster.firebase.FirebaseConfig;
 import com.javamaster.repository.MemberRepository;
+import com.javamaster.repository.UserRepository;
 import com.javamaster.service.IMemberService;
 import com.javamaster.service.IUserService;
 import com.javamaster.storage.MemberStorage;
@@ -37,6 +39,8 @@ public class MemberServiceImpl implements IMemberService {
 	private IUserService userService;
 	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public Member createMember(Member member) throws InterruptedException, ExecutionException {
@@ -81,8 +85,8 @@ public class MemberServiceImpl implements IMemberService {
 		collectionAPIFuture.get().getUpdateTime().toString();
 		return member;
 	}
-	
-	//Author:NHH
+
+	// Author:NHH
 	@Override
 	public String deleteMemberById(String memberId) throws InterruptedException, ExecutionException {
 		Firestore dbFirestore = FirestoreClient.getFirestore();
@@ -92,13 +96,26 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 	@Override
-	public Flux<Member> getMemberByConversationId(String conversationId) throws InterruptedException, ExecutionException {
+	public Flux<Member> getMemberByConversationId(String conversationId)
+			throws InterruptedException, ExecutionException {
 		Firestore dbFirestore = FirestoreClient.getFirestore();
 		Flux<Member> member = memberRepository.findAllByConversationId(conversationId);
-		
+
 		return member;
 	}
 
-	
+	@Override
+	public int deleteMemberInUser(String memberId, String userId) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		User user = userRepository.findById(userId).block();
+		List<String> getListMemberInConversation = user.getMembers();
+		getListMemberInConversation.remove(memberId);
+		user.setMembers(getListMemberInConversation);
+		System.out.println(user.getMembers());
+		ApiFuture<WriteResult> collectionAPIFuture3 = dbFirestore.collection(COLLECTION_NAME_USER).document(userId)
+				.set(user);
+
+		return 0;
+	}
 
 }

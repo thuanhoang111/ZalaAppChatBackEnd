@@ -97,4 +97,32 @@ public class UserServiceImpl implements IUserService {
 		return user;
 	}
 
+	@Override
+	public User deleteConversationInUser(String userId, String conversationId)
+			throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		User user4 = userRepository.findById(userId).block();
+		List<String> getListConversationInUser = user4.getConversations();
+		getListConversationInUser.remove(conversationId);
+		user4.setConversations(getListConversationInUser);
+		System.out.println(user4.getConversations());
+		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME).document(userId)
+				.set(user4);
+		return null;
+	}
+
+	@Override
+	public User addConversationInUser(String userId, String conversationId)
+			throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = FirestoreClient.getFirestore();
+		User user = userRepository.findById(userId).block();
+		List<String> list1 = user.getConversations();
+		list1.add(conversationId);
+		user.setConversations(list1);
+		System.out.println(user.getFullName() + "   " + user.getConversations());
+		ApiFuture<WriteResult> collectionAPIFuture2 = dbFirestore.collection(COLLECTION_NAME).document(userId)
+				.set(user);
+		return null;
+	}
+
 }
