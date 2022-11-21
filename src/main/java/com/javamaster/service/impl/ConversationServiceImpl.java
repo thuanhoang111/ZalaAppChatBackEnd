@@ -24,6 +24,7 @@ import com.javamaster.entity.Message;
 import com.javamaster.entity.User;
 import com.javamaster.firebase.FirebaseConfig;
 import com.javamaster.repository.ConversationRepository;
+import com.javamaster.repository.MemberRepository;
 import com.javamaster.repository.UserRepository;
 import com.javamaster.service.IConversationService;
 import com.javamaster.service.IMemberService;
@@ -48,6 +49,9 @@ public class ConversationServiceImpl implements IConversationService {
 
 	@Autowired
 	private IMessageService messageService;
+	
+	@Autowired
+	private IConversationService conversationService;
 
 	@Autowired
 	private ConversationRepository conversationRepository;
@@ -287,6 +291,34 @@ public class ConversationServiceImpl implements IConversationService {
 					.delete();
 			return "Delete Conversation id: " + conversationId + "-at: " + LocalDateTime.now();
 			
+		
+	}
+
+	@Override
+	public int disbandingTheGroup(String conversationIdDelete) throws InterruptedException, ExecutionException {
+		
+		Conversation conversation = conversationService.getConversationById(conversationIdDelete);
+			
+		try {
+			for (String memberID : conversation.getMemberInGroup()) {
+				Member member = memberService.getMemberById(memberID);
+				User user = userService.getUser(member.getUserId());
+				List<String> newConversation = new ArrayList<String>();
+				for (String conversationId : user.getConversations()) {
+					if(!conversationId.equals(conversation.getId())) {
+						newConversation.add(conversationId);
+					}
+				}
+				
+				user.setConversations(newConversation);
+				userService.updateUser(user);
+			}
+			
+			return 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return 1;
+		}
 		
 	}
 
