@@ -10,6 +10,7 @@ public class Conversation {
 	private List<String> memberInGroup;
 	private List<String> messages;
 	private boolean typeChat;
+	private String admin;
 	public Conversation(String id, String groupName, List<String> memberInGroup, List<String> messages) {
 		super();
 		this.id = id;
@@ -26,6 +27,18 @@ public class Conversation {
 		this.memberInGroup = memberInGroup;
 		this.messages = messages;
 		this.typeChat = typeChat;
+	}
+	
+
+	public Conversation(String id, String groupName, List<String> memberInGroup, List<String> messages,
+			boolean typeChat, String admin) {
+		super();
+		this.id = id;
+		this.groupName = groupName;
+		this.memberInGroup = memberInGroup;
+		this.messages = messages;
+		this.typeChat = typeChat;
+		this.admin = admin;
 	}
 
 	public Conversation() {
@@ -68,13 +81,23 @@ public class Conversation {
 	public void setTypeChat(boolean typeChat) {
 		this.typeChat = typeChat;
 	}
-	
+
+	public String getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(String admin) {
+		this.admin = admin;
+	}
 
 	@Override
 	public String toString() {
 		return "Conversation [id=" + id + ", groupName=" + groupName + ", memberInGroup=" + memberInGroup
-				+ ", messages=" + messages + ", typeChat=" + typeChat + "]";
+				+ ", messages=" + messages + ", typeChat=" + typeChat + ", admin=" + admin + "]";
 	}
+	
+
+	
 	
 	
 	
